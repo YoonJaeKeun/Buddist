@@ -1,0 +1,932 @@
+{
+  "format_version": 1,
+  "source_policy": "CBETA base text; notes and variant apparatus excluded",
+  "reading_source": "https://raw.githubusercontent.com/masoris/hanja_hangul/main/src/hanja.csv",
+  "reading_license": "https://github.com/masoris/hanja_hangul/blob/main/LICENSE",
+  "dueum_source": "https://raw.githubusercontent.com/masoris/hanja_hangul/main/src/dueum.csv",
+  "segmentation_source": "https://raw.githubusercontent.com/ldkrsi/jieba-zh_TW/master/jieba/dict.txt",
+  "segmentation_license": "https://github.com/ldkrsi/jieba-zh_TW/blob/master/LICENSE",
+  "gaiji_source": "https://raw.githubusercontent.com/cbeta-org/cbeta_gaiji/master/cbeta_gaiji.json",
+  "sutras": [
+    {
+      "slug": "금강경",
+      "title_ko": "금강반야바라밀경",
+      "title_zh": "金剛般若波羅蜜經",
+      "taisho": "T0235",
+      "translator": "요진 구마라집",
+      "source_url": "https://raw.githubusercontent.com/cbeta-git/xml-p5a/master/T/T08/T08n0235.xml",
+      "source_xml_sha256": "bf693f288f408cfe39b130cd11579a25ec3b5aa43e8f8c4bcf480af5e3ab3a7a",
+      "juan_count": 1,
+      "characters": 6649,
+      "hanja_count": 5191,
+      "extracted_text_sha256": "410bdb2e9915072775f3806819dac974097f0580594526df8ef861dee03f8d9b",
+      "juan": [
+        {
+          "juan": 1,
+          "file": "금강경/001.md",
+          "blocks": 133,
+          "characters": 6649,
+          "hanja": 5191,
+          "text_sha256": "410bdb2e9915072775f3806819dac974097f0580594526df8ef861dee03f8d9b"
+        }
+      ]
+    },
+    {
+      "slug": "반야심경",
+      "title_ko": "반야바라밀다심경",
+      "title_zh": "般若波羅蜜多心經",
+      "taisho": "T0251",
+      "translator": "당 현장",
+      "source_url": "https://raw.githubusercontent.com/cbeta-git/xml-p5a/master/T/T08/T08n0251.xml",
+      "source_xml_sha256": "ac70ae0e42a98db022acff853d7ef0493a6769c9a3a04652717aab65aa79a7b5",
+      "juan_count": 1,
+      "characters": 1305,
+      "hanja_count": 1097,
+      "extracted_text_sha256": "e1ad88b23fbaa990a41b1c51b313c98ae330f6ed3ab164bff828d74d17ee1149",
+      "juan": [
+        {
+          "juan": 1,
+          "file": "반야심경/001.md",
+          "blocks": 16,
+          "characters": 1305,
+          "hanja": 1097,
+          "text_sha256": "e1ad88b23fbaa990a41b1c51b313c98ae330f6ed3ab164bff828d74d17ee1149"
+        }
+      ]
+    },
+    {
+      "slug": "법구경",
+      "title_ko": "법구경",
+      "title_zh": "法句經",
+      "taisho": "T0210",
+      "translator": "오 유기난 등",
+      "source_url": "https://raw.githubusercontent.com/cbeta-git/xml-p5a/master/T/T04/T04n0210.xml",
+      "source_xml_sha256": "763c4b823b7c7c4b4ebe7b4a836c941e611f55505acbeb8be6c5c2c246131794",
+      "juan_count": 2,
+      "characters": 22123,
+      "hanja_count": 15414,
+      "extracted_text_sha256": "4e7d42593ecc11780a15e20e96423d91dce291e099de5c9cfc8514df071aae8f",
+      "juan": [
+        {
+          "juan": 1,
+          "file": "법구경/001.md",
+          "blocks": 641,
+          "characters": 10822,
+          "hanja": 7556,
+          "text_sha256": "b6f874d6ccd8388420e3a0a90aa4e9aacc8076aabe2ed65d410abee8aa03eb65"
+        },
+        {
+          "juan": 2,
+          "file": "법구경/002.md",
+          "blocks": 734,
+          "characters": 11299,
+          "hanja": 7858,
+          "text_sha256": "9dd06dbf47ab04c6536e098cbb07ec5c580ef2b77d3921e4bc93a76fb870e583"
+        }
+      ]
+    },
+    {
+      "slug": "유마경",
+      "title_ko": "유마힐소설경",
+      "title_zh": "維摩詰所說經",
+      "taisho": "T0475",
+      "translator": "요진 구마라집",
+      "source_url": "https://raw.githubusercontent.com/cbeta-git/xml-p5a/master/T/T14/T14n0475.xml",
+      "source_xml_sha256": "65e6e76a7dcd767994ef6854c82eedae9d30101b321e87dda10c11610c248cb9",
+      "juan_count": 3,
+      "characters": 34019,
+      "hanja_count": 27229,
+      "extracted_text_sha256": "504e1d3846d0e8f3e7bf774a491049c6a126fb91672637293eda83c7b6c2df5b",
+      "juan": [
+        {
+          "juan": 1,
+          "file": "유마경/001.md",
+          "blocks": 106,
+          "characters": 12092,
+          "hanja": 9774,
+          "text_sha256": "7d26f1d74369c22ad06aff5bdcbdbbb6f6c78fa67fe92a4bad592b9f0c563ed5"
+        },
+        {
+          "juan": 2,
+          "file": "유마경/002.md",
+          "blocks": 272,
+          "characters": 12414,
+          "hanja": 9758,
+          "text_sha256": "cfdd6d4f266f9cbd9474009fd57be11f0bf64a63ae3ae134641e1f9c7f60113a"
+        },
+        {
+          "juan": 3,
+          "file": "유마경/003.md",
+          "blocks": 110,
+          "characters": 9509,
+          "hanja": 7697,
+          "text_sha256": "199da7343b6ddc46f1662129527f2568985e7a9f4ed66b418365fd9666dd679b"
+        }
+      ]
+    },
+    {
+      "slug": "무량수경",
+      "title_ko": "불설무량수경",
+      "title_zh": "佛說無量壽經",
+      "taisho": "T0360",
+      "translator": "조위 강승개",
+      "source_url": "https://raw.githubusercontent.com/cbeta-git/xml-p5a/master/T/T12/T12n0360.xml",
+      "source_xml_sha256": "f4de22c32f2e2d41130cadcf63e0d560b52c03c1a668c6f1321c635b23f82555",
+      "juan_count": 2,
+      "characters": 21295,
+      "hanja_count": 17423,
+      "extracted_text_sha256": "ab3cac402b1a9c43c694dd4ec7771c6777a7dcc5466ba99eb2c430086d40f9f7",
+      "juan": [
+        {
+          "juan": 1,
+          "file": "무량수경/001.md",
+          "blocks": 165,
+          "characters": 10342,
+          "hanja": 8370,
+          "text_sha256": "9dca50a3461b10d8bc11e4d3c6310dde8d00a9085205998a6b1c7eba91495d66"
+        },
+        {
+          "juan": 2,
+          "file": "무량수경/002.md",
+          "blocks": 141,
+          "characters": 10951,
+          "hanja": 9053,
+          "text_sha256": "1f0ff4e040c85d5124e324fd5e28df191a3e43e4219f2b46975ce3b260bad670"
+        }
+      ]
+    },
+    {
+      "slug": "관무량수경",
+      "title_ko": "불설관무량수불경",
+      "title_zh": "佛說觀無量壽佛經",
+      "taisho": "T0365",
+      "translator": "송 강량야사",
+      "source_url": "https://raw.githubusercontent.com/cbeta-git/xml-p5a/master/T/T12/T12n0365.xml",
+      "source_xml_sha256": "7f29b085d35cc26634c68f1ea9c46d21595f4b22616b012ed519929e2328766f",
+      "juan_count": 1,
+      "characters": 9546,
+      "hanja_count": 7967,
+      "extracted_text_sha256": "18118876a6ea8c003ccd991a844da24420bb0486d9e6581a361794527278f80d",
+      "juan": [
+        {
+          "juan": 1,
+          "file": "관무량수경/001.md",
+          "blocks": 80,
+          "characters": 9546,
+          "hanja": 7967,
+          "text_sha256": "18118876a6ea8c003ccd991a844da24420bb0486d9e6581a361794527278f80d"
+        }
+      ]
+    },
+    {
+      "slug": "아미타경",
+      "title_ko": "불설아미타경",
+      "title_zh": "佛說阿彌陀經",
+      "taisho": "T0366",
+      "translator": "요진 구마라집",
+      "source_url": "https://raw.githubusercontent.com/cbeta-git/xml-p5a/master/T/T12/T12n0366.xml",
+      "source_xml_sha256": "9212d76f1e3ae26311b224c614add46da85a5f7bf34a4d32b4683211201f6b72",
+      "juan_count": 1,
+      "characters": 2537,
+      "hanja_count": 2107,
+      "extracted_text_sha256": "20b078eec5c1b9e0d7851ff75ccf6bdf0042f67f493a3767743034c5d30775eb",
+      "juan": [
+        {
+          "juan": 1,
+          "file": "아미타경/001.md",
+          "blocks": 29,
+          "characters": 2537,
+          "hanja": 2107,
+          "text_sha256": "20b078eec5c1b9e0d7851ff75ccf6bdf0042f67f493a3767743034c5d30775eb"
+        }
+      ]
+    },
+    {
+      "slug": "법화경",
+      "title_ko": "묘법연화경",
+      "title_zh": "妙法蓮華經",
+      "taisho": "T0262",
+      "translator": "요진 구마라집",
+      "source_url": "https://raw.githubusercontent.com/cbeta-git/xml-p5a/master/T/T09/T09n0262.xml",
+      "source_xml_sha256": "9e3a534d07d8cd6519520349ee321c7f0075db9bcc8a6b280ffd3275433fd7db",
+      "juan_count": 7,
+      "characters": 92826,
+      "hanja_count": 71841,
+      "extracted_text_sha256": "2ad3782eb3205539e6ec121213f668873613eafbc426e31f8bfb0760074689d7",
+      "juan": [
+        {
+          "juan": 1,
+          "file": "법화경/001.md",
+          "blocks": 550,
+          "characters": 13308,
+          "hanja": 10130,
+          "text_sha256": "278309d651ee969c0e4adc492ed85e18078c3e9eee9bda861793851f1dda6170"
+        },
+        {
+          "juan": 2,
+          "file": "법화경/002.md",
+          "blocks": 469,
+          "characters": 13428,
+          "hanja": 9909,
+          "text_sha256": "160134a37838a168015205910603b39f1a6cb23c2bf74a1c253254b97dc3d8c3"
+        },
+        {
+          "juan": 3,
+          "file": "법화경/003.md",
+          "blocks": 420,
+          "characters": 12406,
+          "hanja": 9447,
+          "text_sha256": "15df81d90d025b205de1d7cea352c27ccfdd0c70dfdceaaf54604da2577d8ffd"
+        },
+        {
+          "juan": 4,
+          "file": "법화경/004.md",
+          "blocks": 432,
+          "characters": 14578,
+          "hanja": 11350,
+          "text_sha256": "417e168c4ba7a15577cd75b1032e49dae753749ddf8f6f05e72501b84a0724fd"
+        },
+        {
+          "juan": 5,
+          "file": "법화경/005.md",
+          "blocks": 467,
+          "characters": 13951,
+          "hanja": 10765,
+          "text_sha256": "b012f704d7e16e2c320fcd71e246950dc3a95690d813a929359263aec04a14c3"
+        },
+        {
+          "juan": 6,
+          "file": "법화경/006.md",
+          "blocks": 333,
+          "characters": 13163,
+          "hanja": 10356,
+          "text_sha256": "38eb8fbfbea1fce7652d2e69101572f5bcf5e0c7a54f20a14a7465b12b0000a0"
+        },
+        {
+          "juan": 7,
+          "file": "법화경/007.md",
+          "blocks": 172,
+          "characters": 11980,
+          "hanja": 9884,
+          "text_sha256": "c2ae417bb83277e43e79c3b03ac7a48285254a22587cca0ad8d4e6c9512d29a0"
+        }
+      ]
+    },
+    {
+      "slug": "화엄경",
+      "title_ko": "대방광불화엄경",
+      "title_zh": "大方廣佛華嚴經",
+      "taisho": "T0279",
+      "translator": "당 실차난타",
+      "source_url": "https://raw.githubusercontent.com/cbeta-git/xml-p5a/master/T/T10/T10n0279.xml",
+      "source_xml_sha256": "861447fb2b823a6d66da738b08235d960a0fa538f3b63371a22337e4e928300a",
+      "juan_count": 80,
+      "characters": 715410,
+      "hanja_count": 593039,
+      "extracted_text_sha256": "0a83313ffe6fe1b8e2ec88f339771e77d7574e3d1b63cee21a7dfeede1ddea7d",
+      "juan": [
+        {
+          "juan": 1,
+          "file": "화엄경/001.md",
+          "blocks": 55,
+          "characters": 7233,
+          "hanja": 6125,
+          "text_sha256": "b34bde6028db7c18c66e5f81fda2e3c261e5b985abb2122d5cc7a0c525ca4d26"
+        },
+        {
+          "juan": 2,
+          "file": "화엄경/002.md",
+          "blocks": 277,
+          "characters": 8064,
+          "hanja": 6668,
+          "text_sha256": "117edab7a813bbed89c7d8b51c20978784c6bfde2ecde03989ab2d368ad376af"
+        },
+        {
+          "juan": 3,
+          "file": "화엄경/003.md",
+          "blocks": 294,
+          "characters": 8191,
+          "hanja": 6757,
+          "text_sha256": "61d36614b6315be118255fd64e289131f47978c1ec87b8e841e2d78da76ec17e"
+        },
+        {
+          "juan": 4,
+          "file": "화엄경/004.md",
+          "blocks": 314,
+          "characters": 8900,
+          "hanja": 7358,
+          "text_sha256": "e08a9b81b4c368d034839084610bc5ef2990a596dffe0bc031821f46cc012905"
+        },
+        {
+          "juan": 5,
+          "file": "화엄경/005.md",
+          "blocks": 288,
+          "characters": 7124,
+          "hanja": 5731,
+          "text_sha256": "7e9ddb001070abe96dd40bab8dd0078a643603bd5ecc0f407fb986a50003fb2c"
+        },
+        {
+          "juan": 6,
+          "file": "화엄경/006.md",
+          "blocks": 316,
+          "characters": 9987,
+          "hanja": 8114,
+          "text_sha256": "d2da879077908293c394be5a66ac87151a763578148ed34d1daa4b7ff9667274"
+        },
+        {
+          "juan": 7,
+          "file": "화엄경/007.md",
+          "blocks": 317,
+          "characters": 9660,
+          "hanja": 7906,
+          "text_sha256": "afe188deaaa5b9de18f2182887d51c83f4c45effdc8aa8a3014f59d8ef261003"
+        },
+        {
+          "juan": 8,
+          "file": "화엄경/008.md",
+          "blocks": 189,
+          "characters": 7924,
+          "hanja": 6582,
+          "text_sha256": "462dfcafd742770c514ce177cdbe2991177d702c41a9d2fe130a4704e4799c62"
+        },
+        {
+          "juan": 9,
+          "file": "화엄경/009.md",
+          "blocks": 17,
+          "characters": 8384,
+          "hanja": 6917,
+          "text_sha256": "c179d2e52f0df1025d5bf3a0ea2fc893562ec2759c7d4957d11bd828c88e5cc7"
+        },
+        {
+          "juan": 10,
+          "file": "화엄경/010.md",
+          "blocks": 221,
+          "characters": 7451,
+          "hanja": 5695,
+          "text_sha256": "9685dc122ed7e8f2f91b32722420757fe4455ee0f6d11be481dbc9ddb7bf2657"
+        },
+        {
+          "juan": 11,
+          "file": "화엄경/011.md",
+          "blocks": 175,
+          "characters": 6181,
+          "hanja": 4973,
+          "text_sha256": "7546c1221214fef29e2227434411bb64e4b9584cb22340c5d0262eec9c55b2e6"
+        },
+        {
+          "juan": 12,
+          "file": "화엄경/012.md",
+          "blocks": 49,
+          "characters": 8638,
+          "hanja": 6494,
+          "text_sha256": "0ea545c259052857ffb95ba7bb692c991e90f4b82a0085572f7d3ebde7f1a37d"
+        },
+        {
+          "juan": 13,
+          "file": "화엄경/013.md",
+          "blocks": 444,
+          "characters": 9917,
+          "hanja": 7526,
+          "text_sha256": "162b815e06b333176e6fa62220f1e76a9079a1cc0a406afad46dbab49ba45d98"
+        },
+        {
+          "juan": 14,
+          "file": "화엄경/014.md",
+          "blocks": 481,
+          "characters": 9433,
+          "hanja": 6977,
+          "text_sha256": "c300ba844a3b35376d96d903d888bfc5f09acbb8d69603d13beeefbf16e0fe1e"
+        },
+        {
+          "juan": 15,
+          "file": "화엄경/015.md",
+          "blocks": 444,
+          "characters": 7998,
+          "hanja": 6221,
+          "text_sha256": "e9b51f016057f4b902fbe5d8d3fc7fc59c162be9add9fcdaaf4c1ddde20e746c"
+        },
+        {
+          "juan": 16,
+          "file": "화엄경/016.md",
+          "blocks": 459,
+          "characters": 11256,
+          "hanja": 8753,
+          "text_sha256": "3b6676ccf182cec8d731c930334246b4de4ad99ecf035ea186727d983554adbb"
+        },
+        {
+          "juan": 17,
+          "file": "화엄경/017.md",
+          "blocks": 280,
+          "characters": 11176,
+          "hanja": 9130,
+          "text_sha256": "650313db522005be90b94a947658d5793f1cd334754a40a8f9de738ce2e98dc0"
+        },
+        {
+          "juan": 18,
+          "file": "화엄경/018.md",
+          "blocks": 75,
+          "characters": 6696,
+          "hanja": 5529,
+          "text_sha256": "b3a1633a056c0208a400c74576610b867dee9cd612d40573f8f3ab85ed0d7925"
+        },
+        {
+          "juan": 19,
+          "file": "화엄경/019.md",
+          "blocks": 261,
+          "characters": 9904,
+          "hanja": 7914,
+          "text_sha256": "088e198c6623339174063857410743f6f34f5bb6285e6f5b2ed9b91f7925f0b8"
+        },
+        {
+          "juan": 20,
+          "file": "화엄경/020.md",
+          "blocks": 215,
+          "characters": 8851,
+          "hanja": 7214,
+          "text_sha256": "a9156c729e22b1c53ca2ebea098f72f4cae050f6213b7f5a182cd36da75a164f"
+        },
+        {
+          "juan": 21,
+          "file": "화엄경/021.md",
+          "blocks": 19,
+          "characters": 6501,
+          "hanja": 5378,
+          "text_sha256": "38d0c028d9a33ed9cf7d21e811b4ae1d726df8cda953c180c887696ade593002"
+        },
+        {
+          "juan": 22,
+          "file": "화엄경/022.md",
+          "blocks": 45,
+          "characters": 9896,
+          "hanja": 8503,
+          "text_sha256": "b09c137f9cbcea9aa05a3d6712dbad865969a4aaabc31142ddb6530e320a2277"
+        },
+        {
+          "juan": 23,
+          "file": "화엄경/023.md",
+          "blocks": 288,
+          "characters": 9426,
+          "hanja": 7530,
+          "text_sha256": "629bb39d8e08ec23d7120c4660556ec08010cba1bc9ec1aa5e4cb4f502e6ed79"
+        },
+        {
+          "juan": 24,
+          "file": "화엄경/024.md",
+          "blocks": 152,
+          "characters": 8994,
+          "hanja": 7515,
+          "text_sha256": "2a2e9f9d16706903112fcc39996c7e81074efe05f5597ab564535793333c8257"
+        },
+        {
+          "juan": 25,
+          "file": "화엄경/025.md",
+          "blocks": 80,
+          "characters": 8770,
+          "hanja": 7432,
+          "text_sha256": "df6e6aa93d969e7e741cdb0f155bdf47587951eef4fb79fd7135d4d1267d6da2"
+        },
+        {
+          "juan": 26,
+          "file": "화엄경/026.md",
+          "blocks": 22,
+          "characters": 8750,
+          "hanja": 7686,
+          "text_sha256": "8c743914c6584dfa13e83081c07a94940d3ab85e25d679ca5926e7baed98eaa5"
+        },
+        {
+          "juan": 27,
+          "file": "화엄경/027.md",
+          "blocks": 26,
+          "characters": 9821,
+          "hanja": 8456,
+          "text_sha256": "6180d6a82d83e27c3cded3b0dfba164767b6860e41842e302e43a0a2de5f7998"
+        },
+        {
+          "juan": 28,
+          "file": "화엄경/028.md",
+          "blocks": 108,
+          "characters": 11228,
+          "hanja": 9569,
+          "text_sha256": "9cda52a66b3ee26df91c9aa43a6f030cb7b4e2a3d4c8c9a9b8720ff27376db8b"
+        },
+        {
+          "juan": 29,
+          "file": "화엄경/029.md",
+          "blocks": 64,
+          "characters": 6446,
+          "hanja": 5613,
+          "text_sha256": "8a3cf8c6352f1ee01c858a20fc083980aea1e53ac930c871185487cbd5d257b1"
+        },
+        {
+          "juan": 30,
+          "file": "화엄경/030.md",
+          "blocks": 73,
+          "characters": 7431,
+          "hanja": 6327,
+          "text_sha256": "33a3664872c700dae93d858aec2132f3023fea749cebcea72250c7a6d241194f"
+        },
+        {
+          "juan": 31,
+          "file": "화엄경/031.md",
+          "blocks": 115,
+          "characters": 9282,
+          "hanja": 7963,
+          "text_sha256": "1e3327a20baf45882feccce24521991f617f1433aeb97920f4a9722919fe8481"
+        },
+        {
+          "juan": 32,
+          "file": "화엄경/032.md",
+          "blocks": 25,
+          "characters": 6023,
+          "hanja": 5286,
+          "text_sha256": "d1d9b0dc8d101c59b0ab3ea9c2fbbed2fa4999ebbff6c4dec06ed03abde5fe3b"
+        },
+        {
+          "juan": 33,
+          "file": "화엄경/033.md",
+          "blocks": 111,
+          "characters": 6374,
+          "hanja": 5413,
+          "text_sha256": "100867c25a29f6424e983c01081d59e96eb33ed315b2808f88249c7ebfca631e"
+        },
+        {
+          "juan": 34,
+          "file": "화엄경/034.md",
+          "blocks": 209,
+          "characters": 9927,
+          "hanja": 8076,
+          "text_sha256": "3d9b9eb5742b91d97639abc8b38cf248b8e015840effcad58bb963655e7f646e"
+        },
+        {
+          "juan": 35,
+          "file": "화엄경/035.md",
+          "blocks": 115,
+          "characters": 7546,
+          "hanja": 6149,
+          "text_sha256": "782dd2d968b57df024124673eff81a3cac1563e10497b78588fd49e534878a19"
+        },
+        {
+          "juan": 36,
+          "file": "화엄경/036.md",
+          "blocks": 136,
+          "characters": 6607,
+          "hanja": 5366,
+          "text_sha256": "b03cbf000c63c48d590b435d2edc9a19e90c2bc7ad8d0ecca6327055dd71b29d"
+        },
+        {
+          "juan": 37,
+          "file": "화엄경/037.md",
+          "blocks": 171,
+          "characters": 8557,
+          "hanja": 7029,
+          "text_sha256": "5dc170b5cd1b6dfef1317c5ddd20b2739e97a1da03eb3a1d6a80683021ead5ed"
+        },
+        {
+          "juan": 38,
+          "file": "화엄경/038.md",
+          "blocks": 173,
+          "characters": 10064,
+          "hanja": 8318,
+          "text_sha256": "b46a219c324fc26deecf687852d3fc19e1727e36e7a14b0cee9aba2d20c7928a"
+        },
+        {
+          "juan": 39,
+          "file": "화엄경/039.md",
+          "blocks": 161,
+          "characters": 10097,
+          "hanja": 8432,
+          "text_sha256": "6fd323edf981592121568060dd17d34e474db2336fc81eb9c9f9e6bd9ebdd006"
+        },
+        {
+          "juan": 40,
+          "file": "화엄경/040.md",
+          "blocks": 23,
+          "characters": 6655,
+          "hanja": 5707,
+          "text_sha256": "d9979662c6bf7a93cbd24cc3595453e624804aa44fcd1b4d8be831735084f70f"
+        },
+        {
+          "juan": 41,
+          "file": "화엄경/041.md",
+          "blocks": 16,
+          "characters": 6456,
+          "hanja": 5651,
+          "text_sha256": "2d6c315957da2884d15fd084b48790e152000f2b2559f93f3e5e4fdb488b2073"
+        },
+        {
+          "juan": 42,
+          "file": "화엄경/042.md",
+          "blocks": 18,
+          "characters": 8026,
+          "hanja": 6918,
+          "text_sha256": "f8c2be1bac5b5216e8894ccfe9ae38938db0d17cff255b26462f65f876a1ca00"
+        },
+        {
+          "juan": 43,
+          "file": "화엄경/043.md",
+          "blocks": 24,
+          "characters": 10261,
+          "hanja": 8883,
+          "text_sha256": "e68725a5197fc4e917313e9b8a4126a7c63bf457a1f57c0000e7db732ac9fd21"
+        },
+        {
+          "juan": 44,
+          "file": "화엄경/044.md",
+          "blocks": 248,
+          "characters": 11626,
+          "hanja": 9381,
+          "text_sha256": "efe8608912600c346d7d790e6b8100ec75f2c9be11fa230b9e391aea5ffb8ede"
+        },
+        {
+          "juan": 45,
+          "file": "화엄경/045.md",
+          "blocks": 255,
+          "characters": 7284,
+          "hanja": 5948,
+          "text_sha256": "988084d6deee783b3a0b769bd206394addc7ed548359e2e02e6dd1d66a592d92"
+        },
+        {
+          "juan": 46,
+          "file": "화엄경/046.md",
+          "blocks": 30,
+          "characters": 7374,
+          "hanja": 6468,
+          "text_sha256": "7fa9ee579ddd360c1e43ad7fa2c98fa4232bec163c2f9f34564e4c624394de93"
+        },
+        {
+          "juan": 47,
+          "file": "화엄경/047.md",
+          "blocks": 39,
+          "characters": 8516,
+          "hanja": 7350,
+          "text_sha256": "7ecf836a4e82b8e91f9fb7da55b4b95cf3d94e505fe989ea1108a311c011aa59"
+        },
+        {
+          "juan": 48,
+          "file": "화엄경/048.md",
+          "blocks": 28,
+          "characters": 10361,
+          "hanja": 8951,
+          "text_sha256": "d50bc4401814f82232d1583f4d0a6a7571d74063bf99aaa3520e720944049b16"
+        },
+        {
+          "juan": 49,
+          "file": "화엄경/049.md",
+          "blocks": 260,
+          "characters": 6038,
+          "hanja": 4705,
+          "text_sha256": "ec92111aa3757f2bbbd644b7de0b43f9747bd0fbb37f6216e0036f5b259b1681"
+        },
+        {
+          "juan": 50,
+          "file": "화엄경/050.md",
+          "blocks": 191,
+          "characters": 10189,
+          "hanja": 8400,
+          "text_sha256": "3510c16716f5f2aee88be53d07356a90d361e81cbf69d1df207fecf49dbb8369"
+        },
+        {
+          "juan": 51,
+          "file": "화엄경/051.md",
+          "blocks": 119,
+          "characters": 8922,
+          "hanja": 7431,
+          "text_sha256": "7e1762e3cd035c7917b484bf1fce9d7c3f9beafcb1adf849b17328b995f1bca4"
+        },
+        {
+          "juan": 52,
+          "file": "화엄경/052.md",
+          "blocks": 104,
+          "characters": 8771,
+          "hanja": 7389,
+          "text_sha256": "fc690e9e0fe2a5f5f127c357faea5496b1d91be0b78204d5307802f6318e62df"
+        },
+        {
+          "juan": 53,
+          "file": "화엄경/053.md",
+          "blocks": 51,
+          "characters": 8410,
+          "hanja": 7203,
+          "text_sha256": "27997ea32638bdcd1022ce70a8dc39698d35c806d078aa6d1b14023e8b5e3d03"
+        },
+        {
+          "juan": 54,
+          "file": "화엄경/054.md",
+          "blocks": 32,
+          "characters": 8256,
+          "hanja": 7085,
+          "text_sha256": "ea8fa31425e43e86b1296c35d0222c44dbcb578372793f729fce2cd265a63b18"
+        },
+        {
+          "juan": 55,
+          "file": "화엄경/055.md",
+          "blocks": 21,
+          "characters": 8220,
+          "hanja": 7090,
+          "text_sha256": "78fd8cd8e024d889f1acd9dbdb2d2f24c07298130e992376d8aef047e90873da"
+        },
+        {
+          "juan": 56,
+          "file": "화엄경/056.md",
+          "blocks": 42,
+          "characters": 9590,
+          "hanja": 8294,
+          "text_sha256": "c4264769cfd37b5ca13622f2795bc295e0cc8e311c9ecc4b8ed367eb85b90747"
+        },
+        {
+          "juan": 57,
+          "file": "화엄경/057.md",
+          "blocks": 45,
+          "characters": 9327,
+          "hanja": 7931,
+          "text_sha256": "5ea045d2ab27003ef5c9f07bcf94c2ef27454681386805a6a66603f778f14718"
+        },
+        {
+          "juan": 58,
+          "file": "화엄경/058.md",
+          "blocks": 36,
+          "characters": 10325,
+          "hanja": 8789,
+          "text_sha256": "433748448b94ef4b83f6976e7687a4bcf3d2d406eb89ecff73a9d6e06afdb2c9"
+        },
+        {
+          "juan": 59,
+          "file": "화엄경/059.md",
+          "blocks": 457,
+          "characters": 11330,
+          "hanja": 8798,
+          "text_sha256": "6777a738c8e7844beb7d113ceb4a1c129e93909b5aa4a02ef43609f697e6e5a5"
+        },
+        {
+          "juan": 60,
+          "file": "화엄경/060.md",
+          "blocks": 237,
+          "characters": 11950,
+          "hanja": 9956,
+          "text_sha256": "f748d399f3a03a85b8935385271f114291ab5bfde12f8e9468b0ff876d5b9bb7"
+        },
+        {
+          "juan": 61,
+          "file": "화엄경/061.md",
+          "blocks": 72,
+          "characters": 8203,
+          "hanja": 7145,
+          "text_sha256": "dd3986e9840d0df503f27b890f1a464340e9e15e91bb0b12c831bd54d024e6b8"
+        },
+        {
+          "juan": 62,
+          "file": "화엄경/062.md",
+          "blocks": 142,
+          "characters": 8991,
+          "hanja": 7518,
+          "text_sha256": "951ec5b29b3b487d600ac7503809bc8d68f562a458de6592902f0115151f47f1"
+        },
+        {
+          "juan": 63,
+          "file": "화엄경/063.md",
+          "blocks": 60,
+          "characters": 9318,
+          "hanja": 7978,
+          "text_sha256": "3c8b4ba9b4cf1b21478aed43b7d1f1e91f4855bff156aecce8df1fc04a4386ba"
+        },
+        {
+          "juan": 64,
+          "file": "화엄경/064.md",
+          "blocks": 83,
+          "characters": 8802,
+          "hanja": 7501,
+          "text_sha256": "36ed81e1893e891081eb690d5f67c129160950d0260d78738796cb365bf9ec3e"
+        },
+        {
+          "juan": 65,
+          "file": "화엄경/065.md",
+          "blocks": 74,
+          "characters": 9154,
+          "hanja": 7782,
+          "text_sha256": "4a946b63b3ba33e036da54ac41fb24a048d22dfe464945adb8763a4a4c13d5ae"
+        },
+        {
+          "juan": 66,
+          "file": "화엄경/066.md",
+          "blocks": 99,
+          "characters": 10800,
+          "hanja": 9105,
+          "text_sha256": "9bd38c3ab5cda0331768c26f2635146f8d76a7d61cf715a0aa8b341e684c4262"
+        },
+        {
+          "juan": 67,
+          "file": "화엄경/067.md",
+          "blocks": 68,
+          "characters": 8939,
+          "hanja": 7575,
+          "text_sha256": "2c6c2a3e527eeb13acf78247623d584899acb6b69977304351872d203e88539c"
+        },
+        {
+          "juan": 68,
+          "file": "화엄경/068.md",
+          "blocks": 183,
+          "characters": 11400,
+          "hanja": 9331,
+          "text_sha256": "ba682f52ada4af8d68694e10637303b05c0cdc2b800d45b05ea43d24fa3c5f07"
+        },
+        {
+          "juan": 69,
+          "file": "화엄경/069.md",
+          "blocks": 275,
+          "characters": 9185,
+          "hanja": 7357,
+          "text_sha256": "719e047180f13d2e0430384dfe142c50302a55e1e239b7b8f267e377987998dd"
+        },
+        {
+          "juan": 70,
+          "file": "화엄경/070.md",
+          "blocks": 186,
+          "characters": 9255,
+          "hanja": 7604,
+          "text_sha256": "e928713d7c90997f635e7dbb8392a6685fff59965bb1b058e18058f903961b77"
+        },
+        {
+          "juan": 71,
+          "file": "화엄경/071.md",
+          "blocks": 139,
+          "characters": 11452,
+          "hanja": 9573,
+          "text_sha256": "d5a84caedbaa78f4b36f66cfcb59fadbacfdbc484db9e9f2b32e90030b424825"
+        },
+        {
+          "juan": 72,
+          "file": "화엄경/072.md",
+          "blocks": 211,
+          "characters": 8383,
+          "hanja": 6718,
+          "text_sha256": "2cefd7f9e9e55fc9a3b41a531883f544771571e694466811758e74effc611b28"
+        },
+        {
+          "juan": 73,
+          "file": "화엄경/073.md",
+          "blocks": 134,
+          "characters": 9013,
+          "hanja": 7441,
+          "text_sha256": "9a274ab6265ddf23ab311bc6d0101c4d4264dc9849ac094d511f725cc9a0260b"
+        },
+        {
+          "juan": 74,
+          "file": "화엄경/074.md",
+          "blocks": 116,
+          "characters": 6206,
+          "hanja": 5135,
+          "text_sha256": "fc572ae3577c2ef06505501d65c88b4852e44d511fcc22f2a1008297639f82b2"
+        },
+        {
+          "juan": 75,
+          "file": "화엄경/075.md",
+          "blocks": 338,
+          "characters": 12268,
+          "hanja": 9780,
+          "text_sha256": "4bcb57ffd0f1739b06f7a9dad6c375b0ad1393e435cad1df35ff557c856e02c8"
+        },
+        {
+          "juan": 76,
+          "file": "화엄경/076.md",
+          "blocks": 79,
+          "characters": 10459,
+          "hanja": 8694,
+          "text_sha256": "c0f06a8d8ea10c32a72db5e4156b7a7dab9134ce73f2b0e3f17ba9ddfe5531a8"
+        },
+        {
+          "juan": 77,
+          "file": "화엄경/077.md",
+          "blocks": 379,
+          "characters": 12687,
+          "hanja": 10336,
+          "text_sha256": "bbbc4f82019cd73a383ee5c8f1b17cc7321082acb93bd31b643462295422bf06"
+        },
+        {
+          "juan": 78,
+          "file": "화엄경/078.md",
+          "blocks": 127,
+          "characters": 11400,
+          "hanja": 9573,
+          "text_sha256": "c1d660b2b7cc9ea93169d6445ecfa68a28b26dd0e03be888d93205506641ea3c"
+        },
+        {
+          "juan": 79,
+          "file": "화엄경/079.md",
+          "blocks": 71,
+          "characters": 7495,
+          "hanja": 6286,
+          "text_sha256": "fa57d9e1c11f398c12c2c2e867e04c9f0df22ac6c58ac50da1be24e9a75db435"
+        },
+        {
+          "juan": 80,
+          "file": "화엄경/080.md",
+          "blocks": 236,
+          "characters": 9247,
+          "hanja": 7654,
+          "text_sha256": "6aa5687b23ff9f0b0989b9089a303390621dab7d0cce2f8f83ab0cbafb38b6f3"
+        }
+      ]
+    }
+  ],
+  "unknown_readings": {}
+}
