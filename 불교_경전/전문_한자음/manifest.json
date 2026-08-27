@@ -55,37 +55,6 @@
       ]
     },
     {
-      "slug": "법구경",
-      "title_ko": "법구경",
-      "title_zh": "法句經",
-      "taisho": "T0210",
-      "translator": "오 유기난 등",
-      "source_url": "https://raw.githubusercontent.com/cbeta-git/xml-p5a/master/T/T04/T04n0210.xml",
-      "source_xml_sha256": "763c4b823b7c7c4b4ebe7b4a836c941e611f55505acbeb8be6c5c2c246131794",
-      "juan_count": 2,
-      "characters": 22123,
-      "hanja_count": 15414,
-      "extracted_text_sha256": "4e7d42593ecc11780a15e20e96423d91dce291e099de5c9cfc8514df071aae8f",
-      "juan": [
-        {
-          "juan": 1,
-          "file": "법구경/001.md",
-          "blocks": 641,
-          "characters": 10822,
-          "hanja": 7556,
-          "text_sha256": "b6f874d6ccd8388420e3a0a90aa4e9aacc8076aabe2ed65d410abee8aa03eb65"
-        },
-        {
-          "juan": 2,
-          "file": "법구경/002.md",
-          "blocks": 734,
-          "characters": 11299,
-          "hanja": 7858,
-          "text_sha256": "9dd06dbf47ab04c6536e098cbb07ec5c580ef2b77d3921e4bc93a76fb870e583"
-        }
-      ]
-    },
-    {
       "slug": "유마경",
       "title_ko": "유마힐소설경",
       "title_zh": "維摩詰所說經",
