@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Build book-style A5 PDFs for the Diamond and Heart Sutras.
+"""Build book-style A5 PDFs for scriptures in this repository.
 
 The script intentionally uses only Python's standard library plus the Microsoft
 Edge installation bundled with Windows.  This keeps the build reproducible in
@@ -26,16 +26,20 @@ EDGE = Path("/mnt/c/Program Files (x86)/Microsoft/Edge/Application/msedge.exe")
 
 @dataclass(frozen=True)
 class Book:
+    key: str
     source: Path
     output: Path
     title: str
     subtitle: str
     running_title: str
     cover_text: str
+    composite: str = "single"
+    footer_text: str = "한자 원문과 쉬운 우리말 풀이\n산스크리트어 핵심 용어 해설 수록"
 
 
 BOOKS = (
     Book(
+        key="금강경",
         source=ROOT / "불교_경전" / "금강경.md",
         output=OUTPUT_DIR / "금강경_원문_우리말풀이_해설.pdf",
         title="금강반야바라밀경",
@@ -44,12 +48,24 @@ BOOKS = (
         cover_text="應無所住 而生其心",
     ),
     Book(
+        key="반야심경",
         source=ROOT / "불교_경전" / "반야심경.md",
         output=OUTPUT_DIR / "반야심경_원문_우리말풀이_해설.pdf",
         title="반야바라밀다심경",
         subtitle="전문 · 우리말 풀이 · 구절별 해설",
         running_title="반야바라밀다심경",
         cover_text="照見五蘊皆空 度一切苦厄",
+    ),
+    Book(
+        key="법구경",
+        source=ROOT / "불교_경전" / "법구경_책머리.md",
+        output=OUTPUT_DIR / "법구경_39품_원문_우리말풀이_해설.pdf",
+        title="법구경",
+        subtitle="39품 · 원문 · 우리말 풀이 · 게송별 해설",
+        running_title="법구경",
+        cover_text="諸惡莫作 諸善奉行 自淨其意",
+        composite="dhammapada",
+        footer_text="한역 T210 39품 전문 수록\n원문과 우리말 풀이 · 수행 해설",
     ),
 )
 
@@ -103,6 +119,56 @@ def is_table_separator(line: str) -> bool:
 
 def split_table_row(line: str) -> list[str]:
     return [cell.strip() for cell in line.strip().strip("|").split("|")]
+
+
+def dhammapada_chapter_files() -> list[Path]:
+    pattern = re.compile(r"법구경_제(\d+)품_.+_문장별_풀이_해설\.md$")
+    numbered: list[tuple[int, Path]] = []
+    for path in (ROOT / "불교_경전").glob("법구경_제*품_*_문장별_풀이_해설.md"):
+        match = pattern.fullmatch(path.name)
+        if match:
+            numbered.append((int(match.group(1)), path))
+    numbered.sort()
+    numbers = [number for number, _ in numbered]
+    if numbers != list(range(1, 40)):
+        raise RuntimeError(f"법구경 품별 파일이 1~39품과 일치하지 않습니다: {numbers}")
+    return [path for _, path in numbered]
+
+
+def prepare_dhammapada_chapter(path: Path) -> str:
+    """Remove repeated file metadata and promote one file to a book chapter."""
+    lines = path.read_text(encoding="utf-8").splitlines()
+    if not lines or not lines[0].startswith("# 법구경 제"):
+        raise RuntimeError(f"법구경 품 제목을 확인할 수 없습니다: {path}")
+    title = lines[0].removeprefix("# 법구경 ").replace(" — 게송별 풀이·해설", "")
+    source_title = next(
+        (line for line in lines if line.startswith("> **원전 품 표제:**")),
+        None,
+    )
+    try:
+        content_start = lines.index("## 품 해제")
+        content_end = lines.index("## 편집 확인")
+    except ValueError as error:
+        raise RuntimeError(f"법구경 품의 구성 표제를 확인할 수 없습니다: {path}") from error
+    content = []
+    for line in lines[content_start:content_end]:
+        if line.startswith("## "):
+            content.append("### " + line[3:])
+        else:
+            content.append(line)
+    parts = [f"## {title}"]
+    if source_title:
+        parts.extend(["", source_title])
+    parts.extend(["", *content, ""])
+    return "\n".join(parts)
+
+
+def book_markdown(book: Book) -> str:
+    introduction = book.source.read_text(encoding="utf-8")
+    if book.composite != "dhammapada":
+        return introduction
+    chapters = [prepare_dhammapada_chapter(path) for path in dhammapada_chapter_files()]
+    return introduction.rstrip() + "\n\n---\n\n" + "\n\n---\n\n".join(chapters)
 
 
 def markdown_to_html(markdown: str) -> tuple[str, list[tuple[int, str, str]]]:
@@ -213,6 +279,22 @@ def markdown_to_html(markdown: str) -> tuple[str, list[tuple[int, str, str]]]:
             output.append(f"</{tag}>")
             continue
 
+        labeled = re.match(r"^\*\*(원문|우리말 풀이|해설)\*\*\s+(.+)$", stripped)
+        if labeled:
+            label = labeled.group(1)
+            role = {
+                "원문": "original",
+                "우리말 풀이": "translation",
+                "해설": "commentary",
+            }[label]
+            output.append(
+                f'<div class="labeled labeled-{role}">'
+                f'<div class="labeled-title">{label}</div>'
+                f'<p>{inline_markup(labeled.group(2))}</p></div>'
+            )
+            index += 1
+            continue
+
         paragraph = [stripped]
         index += 1
         while index < len(lines):
@@ -239,7 +321,15 @@ def markdown_to_html(markdown: str) -> tuple[str, list[tuple[int, str, str]]]:
 def make_toc(items: list[tuple[int, str, str]]) -> str:
     rows = []
     for _, title, anchor in items:
-        short_title = re.sub(r"^제?(\d+)\.?\s*", lambda m: f"{m.group(1)}. ", title)
+        chapter = re.match(r"^제(\d+)(품)?\s*", title)
+        numbered = re.match(r"^(\d+)\.\s*", title)
+        if chapter:
+            marker = "품 " if chapter.group(2) else ""
+            short_title = f"{chapter.group(1)}. {marker}{title[chapter.end():]}"
+        elif numbered:
+            short_title = f"{numbered.group(1)}. {title[numbered.end():]}"
+        else:
+            short_title = title
         rows.append(f'<li><a href="#{anchor}">{inline_markup(short_title)}</a></li>')
     compact = " compact" if len(rows) > 18 else ""
     return f'<nav class="toc{compact}"><h2>차례</h2><ol>{"".join(rows)}</ol></nav>'
@@ -378,6 +468,23 @@ blockquote.original {{
   text-align: justify;
 }}
 .translation-section p {{ padding-left: 4mm; border-left: .7mm solid #c7aa7a; }}
+.labeled {{ margin: 0 0 4mm; padding: 3.2mm 4mm; break-inside: avoid; }}
+.labeled-title {{
+  margin-bottom: 1.4mm;
+  color: #654838;
+  font: 700 8.5pt/1.4 'Book Sans', sans-serif;
+  letter-spacing: .06em;
+}}
+.labeled p {{ margin: 0; }}
+.labeled-original {{
+  border: .25mm solid #d7c7ad;
+  border-left: 1.1mm solid #8f6236;
+  background: #fbf7ed;
+  font-size: 10.1pt;
+  line-height: 1.95;
+}}
+.labeled-translation {{ border-left: .7mm solid #c7aa7a; background: #fcfaf6; }}
+.labeled-commentary {{ background: #f5f1e9; color: #453f38; }}
 ul, ol {{ margin: 0 0 4mm; padding-left: 5.7mm; }}
 li {{ margin: 0 0 2.1mm; padding-left: .7mm; orphans: 3; widows: 3; }}
 .commentary-list li::marker {{ color: #a06b3e; }}
@@ -404,8 +511,9 @@ strong {{ font-weight: 700; }}
 
 
 def book_html(book: Book) -> str:
-    body, headings = markdown_to_html(book.source.read_text(encoding="utf-8"))
+    body, headings = markdown_to_html(book_markdown(book))
     toc = make_toc(headings)
+    footer = "<br>".join(html.escape(line) for line in book.footer_text.splitlines())
     return f"""<!doctype html>
 <html lang="ko">
 <head>
@@ -422,7 +530,7 @@ def book_html(book: Book) -> str:
     <p class="subtitle">{html.escape(book.subtitle)}</p>
     <div class="seal">{html.escape(book.cover_text)}</div>
   </div>
-  <div class="cover-footer">한자 원문과 쉬운 우리말 풀이<br>산스크리트어 핵심 용어 해설 수록</div>
+  <div class="cover-footer">{footer}</div>
 </section>
 {toc}
 <main>{body}</main>
@@ -450,6 +558,8 @@ def render_pdf(book: Book, keep_html: bool = False) -> Path:
         raise FileNotFoundError(f"Microsoft Edge를 찾을 수 없습니다: {EDGE}")
     if not book.source.exists():
         raise FileNotFoundError(f"원본 문서를 찾을 수 없습니다: {book.source}")
+    if book.composite == "dhammapada":
+        dhammapada_chapter_files()
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
     html_path = OUTPUT_DIR / f".{book.output.stem}.html"
     html_path.write_text(book_html(book), encoding="utf-8")
@@ -483,8 +593,15 @@ def main() -> None:
         action="store_true",
         help="검토를 위해 PDF와 함께 중간 HTML도 남깁니다.",
     )
+    parser.add_argument(
+        "--book",
+        choices=["all", *(book.key for book in BOOKS)],
+        default="all",
+        help="특정 경전만 만들려면 경전 이름을 지정합니다.",
+    )
     args = parser.parse_args()
-    for book in BOOKS:
+    selected = BOOKS if args.book == "all" else tuple(book for book in BOOKS if book.key == args.book)
+    for book in selected:
         output = render_pdf(book, keep_html=args.keep_html)
         print(f"생성: {output.relative_to(ROOT)} ({output.stat().st_size:,} bytes)")
 
