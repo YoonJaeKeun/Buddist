@@ -14,6 +14,7 @@ import re
 import shutil
 import subprocess
 import tempfile
+import time
 from dataclasses import dataclass
 from pathlib import Path
 from urllib.parse import quote
@@ -21,7 +22,25 @@ from urllib.parse import quote
 
 ROOT = Path(__file__).resolve().parents[1]
 OUTPUT_DIR = ROOT / "불교_경전" / "PDF"
-EDGE = Path("/mnt/c/Program Files (x86)/Microsoft/Edge/Application/msedge.exe")
+EDGE_CANDIDATES = (
+    Path("/mnt/c/Program Files (x86)/Microsoft/Edge/Application/msedge.exe"),
+    Path("/mnt/c/Program Files/Microsoft/Edge/Application/msedge.exe"),
+    Path("C:/Program Files (x86)/Microsoft/Edge/Application/msedge.exe"),
+    Path("C:/Program Files/Microsoft/Edge/Application/msedge.exe"),
+)
+
+
+def find_edge() -> Path:
+    """Locate Microsoft Edge under WSL or under native Windows Python."""
+    for candidate in EDGE_CANDIDATES:
+        if candidate.exists():
+            return candidate
+    located = shutil.which("msedge") or shutil.which("msedge.exe")
+    if located:
+        return Path(located)
+    raise FileNotFoundError(
+        "Microsoft Edge를 찾을 수 없습니다: " + ", ".join(str(p) for p in EDGE_CANDIDATES)
+    )
 
 
 @dataclass(frozen=True)
@@ -82,6 +101,18 @@ BOOKS = (
         paper_size="A4",
         composite="lotus",
         footer_text="구마라집 한역 T262 28품 전문 수록\n문장별 우리말 풀이 · 확장 해설",
+    ),
+    Book(
+        key="유마경",
+        source=ROOT / "불교_경전" / "유마경.md",
+        output=OUTPUT_DIR / "유마경_14품_원문_우리말풀이_해설.pdf",
+        title="유마힐소설경",
+        subtitle="14품 · 원문 · 우리말 풀이 · 문장별 해설",
+        running_title="유마힐소설경",
+        cover_text="以一切眾生病 是故我病",
+        paper_size="A4",
+        composite="vimalakirti",
+        footer_text="구마라집 한역 T475 14품 전문 수록\n문장별 우리말 풀이 · 확장 해설",
     ),
     Book(
         key="정토삼부경",
@@ -203,21 +234,30 @@ def prepare_dhammapada_preface() -> str:
     return "\n".join(prepared)
 
 
-def lotus_chapter_files() -> list[Path]:
-    pattern = re.compile(r"법화경_제(\d+)품_.+_문장별_풀이_해설\.md$")
+CHAPTER_BOOKS = {
+    "lotus": ("법화경", 28),
+    "vimalakirti": ("유마경", 14),
+}
+
+
+def chapter_files(scripture: str, count: int) -> list[Path]:
+    """Return one scripture's numbered 품별 보강본 files, in reading order."""
+    pattern = re.compile(rf"{scripture}_제(\d+)품_.+_문장별_풀이_해설\.md$")
     numbered: list[tuple[int, Path]] = []
-    for path in (ROOT / "불교_경전").glob("법화경_제*품_*_문장별_풀이_해설.md"):
+    for path in (ROOT / "불교_경전").glob(f"{scripture}_제*품_*_문장별_풀이_해설.md"):
         match = pattern.fullmatch(path.name)
         if match:
             numbered.append((int(match.group(1)), path))
     numbered.sort()
     numbers = [number for number, _ in numbered]
-    if numbers != list(range(1, 29)):
-        raise RuntimeError(f"법화경 품별 파일이 1~28품과 일치하지 않습니다: {numbers}")
+    if numbers != list(range(1, count + 1)):
+        raise RuntimeError(
+            f"{scripture} 품별 파일이 1~{count}품과 일치하지 않습니다: {numbers}"
+        )
     return [path for _, path in numbered]
 
 
-def prepare_lotus_introduction(path: Path) -> str:
+def prepare_introduction(path: Path, scripture: str) -> str:
     """Keep the print-worthy introduction and omit the repeated link index."""
     lines = path.read_text(encoding="utf-8").splitlines()
     try:
@@ -225,20 +265,20 @@ def prepare_lotus_introduction(path: Path) -> str:
             index for index, line in enumerate(lines) if line.startswith("## 제1품 ")
         )
     except StopIteration as error:
-        raise RuntimeError(f"법화경 제1품의 시작을 확인할 수 없습니다: {path}") from error
+        raise RuntimeError(f"{scripture} 제1품의 시작을 확인할 수 없습니다: {path}") from error
 
     front = lines[1:chapter_start]
-    prepared = ["## 법화경을 읽기 전에"]
+    prepared = [f"## {scripture}을 읽기 전에"]
     skipping_links = False
     for line in front:
         if line.strip() == "문장별 풀이·해설 보강본:":
             skipping_links = True
             continue
         if skipping_links:
-            if line.startswith("원문에는 "):
-                skipping_links = False
-            else:
+            # The index is a run of numbered links, sometimes split by blank lines.
+            if not line.strip() or re.match(r"^\d+\. \[", line.strip()):
                 continue
+            skipping_links = False
         if line.startswith("## "):
             prepared.append("### " + line[3:])
         else:
@@ -248,16 +288,16 @@ def prepare_lotus_introduction(path: Path) -> str:
     return "\n".join(prepared)
 
 
-def prepare_lotus_chapter(path: Path) -> str:
-    """Promote one expanded Lotus Sutra file to a print book chapter."""
+def prepare_chapter(path: Path, scripture: str) -> str:
+    """Promote one expanded 품별 보강본 file to a print book chapter."""
     lines = path.read_text(encoding="utf-8").splitlines()
-    if not lines or not lines[0].startswith("# 법화경 제"):
-        raise RuntimeError(f"법화경 품 제목을 확인할 수 없습니다: {path}")
+    if not lines or not lines[0].startswith(f"# {scripture} 제"):
+        raise RuntimeError(f"{scripture} 품 제목을 확인할 수 없습니다: {path}")
     required = ("**원문**", "**우리말 풀이**", "**해설**")
     if any(not any(line.startswith(label) for line in lines) for label in required):
-        raise RuntimeError(f"법화경 원문·풀이·해설 구성을 확인할 수 없습니다: {path}")
+        raise RuntimeError(f"{scripture} 원문·풀이·해설 구성을 확인할 수 없습니다: {path}")
 
-    title = lines[0].removeprefix("# 법화경 ").replace(" — 확장 해설본", "")
+    title = lines[0].removeprefix(f"# {scripture} ").replace(" — 확장 해설본", "")
     prepared = [f"## {title}"]
     for line in lines[1:]:
         prepared.append("### " + line[3:] if line.startswith("## ") else line)
@@ -319,9 +359,12 @@ def book_markdown(book: Book) -> str:
     if book.composite == "pureland":
         sections = pureland_sections()
         return introduction.rstrip() + "\n\n---\n\n" + "\n\n---\n\n".join(sections)
-    if book.composite == "lotus":
-        introduction = prepare_lotus_introduction(book.source)
-        chapters = [prepare_lotus_chapter(path) for path in lotus_chapter_files()]
+    if book.composite in CHAPTER_BOOKS:
+        scripture, count = CHAPTER_BOOKS[book.composite]
+        introduction = prepare_introduction(book.source, scripture)
+        chapters = [
+            prepare_chapter(path, scripture) for path in chapter_files(scripture, count)
+        ]
         return introduction + "\n\n---\n\n" + "\n\n---\n\n".join(chapters)
     return introduction
 
@@ -692,7 +735,8 @@ tbody tr:nth-child(even) {{ background: #f8f5ef; }}
   break-inside: avoid-page;
   page-break-inside: avoid;
 }}
-.book-lotus .passage-section {{
+.book-lotus .passage-section,
+.book-vimalakirti .passage-section {{
   break-inside: avoid-page;
   page-break-inside: avoid;
 }}
@@ -732,8 +776,12 @@ def book_html(book: Book) -> str:
 
 
 def windows_path(path: Path) -> str:
+    """Return the Windows form of a path, converting only when running on WSL."""
+    resolved = str(path.resolve())
+    if not resolved.startswith("/"):
+        return resolved
     result = subprocess.run(
-        ["wslpath", "-w", str(path.resolve())],
+        ["wslpath", "-w", resolved],
         check=True,
         capture_output=True,
         text=True,
@@ -746,15 +794,36 @@ def windows_file_uri(path: Path) -> str:
     return "file:///" + quote(value, safe="/:~")
 
 
+def await_rendered_pdf(path: Path, previous_mtime: int | None, timeout: float) -> None:
+    """Wait until Edge has finished writing the PDF.
+
+    Under WSL the interop wrapper blocks until Edge exits, but the native
+    Windows ``msedge.exe`` is only a launcher: it returns at once and the real
+    browser writes the file a moment later.  Wait for a fresh file whose size
+    has stopped growing so both environments behave the same way.
+    """
+    deadline = time.monotonic() + timeout
+    stable_size: int | None = None
+    while time.monotonic() < deadline:
+        if path.exists():
+            stat = path.stat()
+            is_fresh = previous_mtime is None or stat.st_mtime_ns != previous_mtime
+            if is_fresh and stat.st_size >= 10_000:
+                if stable_size == stat.st_size:
+                    return
+                stable_size = stat.st_size
+        time.sleep(0.5)
+    raise TimeoutError(f"PDF가 제한 시간 안에 생성되지 않았습니다: {path}")
+
+
 def render_pdf(book: Book, keep_html: bool = False) -> Path:
-    if not EDGE.exists():
-        raise FileNotFoundError(f"Microsoft Edge를 찾을 수 없습니다: {EDGE}")
+    edge = find_edge()
     if not book.source.exists():
         raise FileNotFoundError(f"원본 문서를 찾을 수 없습니다: {book.source}")
     if book.composite == "dhammapada":
         dhammapada_chapter_files()
-    elif book.composite == "lotus":
-        lotus_chapter_files()
+    elif book.composite in CHAPTER_BOOKS:
+        chapter_files(*CHAPTER_BOOKS[book.composite])
     elif book.composite == "pureland":
         pureland_sections()
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
@@ -762,7 +831,7 @@ def render_pdf(book: Book, keep_html: bool = False) -> Path:
     html_path.write_text(book_html(book), encoding="utf-8")
     profile = Path(tempfile.mkdtemp(prefix=".edge-profile-", dir=OUTPUT_DIR))
     command = [
-        str(EDGE),
+        str(edge),
         "--headless=new",
         "--disable-gpu",
         "--disable-extensions",
@@ -772,8 +841,10 @@ def render_pdf(book: Book, keep_html: bool = False) -> Path:
         f"--print-to-pdf={windows_path(book.output)}",
         windows_file_uri(html_path),
     ]
+    previous_mtime = book.output.stat().st_mtime_ns if book.output.exists() else None
     try:
-        subprocess.run(command, check=True, capture_output=True, timeout=180)
+        subprocess.run(command, check=True, capture_output=True, timeout=300)
+        await_rendered_pdf(book.output, previous_mtime, timeout=300)
     finally:
         shutil.rmtree(profile, ignore_errors=True)
         if not keep_html:
