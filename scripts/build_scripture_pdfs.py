@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Build book-style A5 PDFs for scriptures in this repository.
+"""Build book-style PDFs for scriptures in this repository.
 
 The script intentionally uses only Python's standard library plus the Microsoft
 Edge installation bundled with Windows.  This keeps the build reproducible in
@@ -33,6 +33,7 @@ class Book:
     subtitle: str
     running_title: str
     cover_text: str
+    paper_size: str = "A5"
     composite: str = "single"
     footer_text: str = "한자 원문과 쉬운 우리말 풀이\n산스크리트어 핵심 용어 해설 수록"
 
@@ -46,6 +47,7 @@ BOOKS = (
         subtitle="원문 · 우리말 풀이 · 구절별 해설",
         running_title="금강반야바라밀경",
         cover_text="應無所住 而生其心",
+        paper_size="A4",
     ),
     Book(
         key="반야심경",
@@ -55,6 +57,7 @@ BOOKS = (
         subtitle="전문 · 우리말 풀이 · 구절별 해설",
         running_title="반야바라밀다심경",
         cover_text="照見五蘊皆空 度一切苦厄",
+        paper_size="A4",
     ),
     Book(
         key="법구경",
@@ -64,8 +67,33 @@ BOOKS = (
         subtitle="39품 · 원문 · 우리말 풀이 · 게송별 해설",
         running_title="법구경",
         cover_text="諸惡莫作 諸善奉行 自淨其意",
+        paper_size="A4",
         composite="dhammapada",
         footer_text="한역 T210 39품 전문 수록\n원문과 우리말 풀이 · 수행 해설",
+    ),
+    Book(
+        key="법화경",
+        source=ROOT / "불교_경전" / "법화경.md",
+        output=OUTPUT_DIR / "법화경_28품_원문_우리말풀이_해설.pdf",
+        title="묘법연화경",
+        subtitle="28품 · 원문 · 우리말 풀이 · 문장별 해설",
+        running_title="묘법연화경",
+        cover_text="開示悟入 佛之知見",
+        paper_size="A4",
+        composite="lotus",
+        footer_text="구마라집 한역 T262 28품 전문 수록\n문장별 우리말 풀이 · 확장 해설",
+    ),
+    Book(
+        key="정토삼부경",
+        source=ROOT / "불교_경전" / "정토삼부경_책머리.md",
+        output=OUTPUT_DIR / "정토삼부경_원문_우리말풀이_해설.pdf",
+        title="정토삼부경",
+        subtitle="무량수경 · 관무량수경 · 아미타경 — 원문 · 우리말 풀이 · 문장별 해설",
+        running_title="정토삼부경",
+        cover_text="設我得佛 十方眾生 至心信樂",
+        paper_size="A4",
+        composite="pureland",
+        footer_text="T12 No. 360 · 365 · 366 경 본문 전문 수록\n문장별 우리말 풀이 · 확장 해설",
     ),
 )
 
@@ -163,12 +191,139 @@ def prepare_dhammapada_chapter(path: Path) -> str:
     return "\n".join(parts)
 
 
+def prepare_dhammapada_preface() -> str:
+    """Promote the separate T210 preface to one PDF book chapter."""
+    path = ROOT / "불교_경전" / "법구경서.md"
+    lines = path.read_text(encoding="utf-8").splitlines()
+    if not lines or not lines[0].startswith("# 법구경서"):
+        raise RuntimeError(f"법구경서 제목을 확인할 수 없습니다: {path}")
+    prepared = ["## " + lines[0].removeprefix("# ")]
+    for line in lines[1:]:
+        prepared.append("### " + line[3:] if line.startswith("## ") else line)
+    return "\n".join(prepared)
+
+
+def lotus_chapter_files() -> list[Path]:
+    pattern = re.compile(r"법화경_제(\d+)품_.+_문장별_풀이_해설\.md$")
+    numbered: list[tuple[int, Path]] = []
+    for path in (ROOT / "불교_경전").glob("법화경_제*품_*_문장별_풀이_해설.md"):
+        match = pattern.fullmatch(path.name)
+        if match:
+            numbered.append((int(match.group(1)), path))
+    numbered.sort()
+    numbers = [number for number, _ in numbered]
+    if numbers != list(range(1, 29)):
+        raise RuntimeError(f"법화경 품별 파일이 1~28품과 일치하지 않습니다: {numbers}")
+    return [path for _, path in numbered]
+
+
+def prepare_lotus_introduction(path: Path) -> str:
+    """Keep the print-worthy introduction and omit the repeated link index."""
+    lines = path.read_text(encoding="utf-8").splitlines()
+    try:
+        chapter_start = next(
+            index for index, line in enumerate(lines) if line.startswith("## 제1품 ")
+        )
+    except StopIteration as error:
+        raise RuntimeError(f"법화경 제1품의 시작을 확인할 수 없습니다: {path}") from error
+
+    front = lines[1:chapter_start]
+    prepared = ["## 법화경을 읽기 전에"]
+    skipping_links = False
+    for line in front:
+        if line.strip() == "문장별 풀이·해설 보강본:":
+            skipping_links = True
+            continue
+        if skipping_links:
+            if line.startswith("원문에는 "):
+                skipping_links = False
+            else:
+                continue
+        if line.startswith("## "):
+            prepared.append("### " + line[3:])
+        else:
+            prepared.append(line)
+    while prepared and prepared[-1].strip() in {"", "---"}:
+        prepared.pop()
+    return "\n".join(prepared)
+
+
+def prepare_lotus_chapter(path: Path) -> str:
+    """Promote one expanded Lotus Sutra file to a print book chapter."""
+    lines = path.read_text(encoding="utf-8").splitlines()
+    if not lines or not lines[0].startswith("# 법화경 제"):
+        raise RuntimeError(f"법화경 품 제목을 확인할 수 없습니다: {path}")
+    required = ("**원문**", "**우리말 풀이**", "**해설**")
+    if any(not any(line.startswith(label) for line in lines) for label in required):
+        raise RuntimeError(f"법화경 원문·풀이·해설 구성을 확인할 수 없습니다: {path}")
+
+    title = lines[0].removeprefix("# 법화경 ").replace(" — 확장 해설본", "")
+    prepared = [f"## {title}"]
+    for line in lines[1:]:
+        prepared.append("### " + line[3:] if line.startswith("## ") else line)
+    return "\n".join(prepared).rstrip()
+
+
+PURELAND_VOLUMES = (
+    ("무량수경 권상", "무량수경_권상_문장별_풀이_해설.md"),
+    ("무량수경 권하", "무량수경_권하_문장별_풀이_해설.md"),
+    ("관무량수경", "관무량수경_문장별_풀이_해설.md"),
+    ("아미타경", "아미타경_문장별_풀이_해설.md"),
+)
+
+PURELAND_SECTION_PREFIXES = ("제1부 불설무량수경 상권 — ", "권하 ")
+
+
+def prepare_pureland_volume(volume: str, name: str) -> str:
+    """Promote one 정토삼부경 manuscript to printed book sections.
+
+    Each manuscript uses ``#`` for its own title, ``##`` for sections and ``###``
+    for numbered passages.  The printed book drops the title, keeps sections at
+    ``##`` so every one of them starts a new page and reaches the table of
+    contents, and leaves passages at ``###``.  Section titles are prefixed with
+    the volume so that the contents page names its sutra on every line.
+    """
+    path = ROOT / "불교_경전" / name
+    lines = path.read_text(encoding="utf-8").splitlines()
+    if not lines or not lines[0].startswith("# "):
+        raise RuntimeError(f"정토삼부경 원고 제목을 확인할 수 없습니다: {path}")
+    required = ("**원문**", "**우리말 풀이**", "**해설**")
+    if any(not any(line.startswith(label) for line in lines) for label in required):
+        raise RuntimeError(f"정토삼부경 원문·풀이·해설 구성을 확인할 수 없습니다: {path}")
+
+    prepared: list[str] = []
+    for line in lines[1:]:
+        if line.startswith("## "):
+            title = line[3:].strip()
+            for prefix in PURELAND_SECTION_PREFIXES:
+                if title.startswith(prefix):
+                    title = title[len(prefix):]
+                    break
+            prepared.append(f"## {volume} · {title}")
+        else:
+            prepared.append(line)
+    return "\n".join(prepared).rstrip()
+
+
+def pureland_sections() -> list[str]:
+    return [prepare_pureland_volume(volume, name) for volume, name in PURELAND_VOLUMES]
+
+
 def book_markdown(book: Book) -> str:
     introduction = book.source.read_text(encoding="utf-8")
-    if book.composite != "dhammapada":
-        return introduction
-    chapters = [prepare_dhammapada_chapter(path) for path in dhammapada_chapter_files()]
-    return introduction.rstrip() + "\n\n---\n\n" + "\n\n---\n\n".join(chapters)
+    if book.composite == "dhammapada":
+        preface = prepare_dhammapada_preface()
+        chapters = [prepare_dhammapada_chapter(path) for path in dhammapada_chapter_files()]
+        sections = [preface, *chapters]
+        return introduction.rstrip() + "\n\n---\n\n" + "\n\n---\n\n".join(sections)
+    if book.composite == "pureland":
+        sections = pureland_sections()
+        return introduction.rstrip() + "\n\n---\n\n" + "\n\n---\n\n".join(sections)
+    if book.composite == "lotus":
+        introduction = prepare_lotus_introduction(book.source)
+        chapters = [prepare_lotus_chapter(path) for path in lotus_chapter_files()]
+        return introduction + "\n\n---\n\n" + "\n\n---\n\n".join(chapters)
+    return introduction
 
 
 def markdown_to_html(markdown: str) -> tuple[str, list[tuple[int, str, str]]]:
@@ -218,7 +373,13 @@ def markdown_to_html(markdown: str) -> tuple[str, list[tuple[int, str, str]]]:
                     "우리말 풀이": "translation-section",
                     "해설": "commentary-section",
                 }
-                subsection_role = role_map.get(title, "general-section")
+                subsection_role = (
+                    "verse-section"
+                    if re.fullmatch(r"제\d+게송", title)
+                    else "passage-section"
+                    if re.fullmatch(r"\d+", title)
+                    else role_map.get(title, "general-section")
+                )
                 output.append(f'<section class="subsection {subsection_role}">')
                 output.append(f'<h3 id="{anchor}">{inline_markup(title)}</h3>')
                 subsection_open = True
@@ -335,8 +496,32 @@ def make_toc(items: list[tuple[int, str, str]]) -> str:
     return f'<nav class="toc{compact}"><h2>차례</h2><ol>{"".join(rows)}</ol></nav>'
 
 
-def stylesheet(running_title: str) -> str:
-    safe_title = running_title.replace('"', "")
+def stylesheet(book: Book) -> str:
+    paper = {
+        "A4": {
+            "width": "210mm",
+            "height": "297mm",
+            "page_margin": "22mm 20mm 23mm 22mm",
+            "cover_padding": "34mm 25mm 28mm",
+            "cover_title_size": "31pt",
+            "body_size": "10pt",
+            "original_size": "10.8pt",
+            "table_size": "8.8pt",
+        },
+        "A5": {
+            "width": "148mm",
+            "height": "210mm",
+            "page_margin": "18mm 16mm 19mm 18mm",
+            "cover_padding": "26mm 18mm 22mm",
+            "cover_title_size": "25pt",
+            "body_size": "9.4pt",
+            "original_size": "10.4pt",
+            "table_size": "8.5pt",
+        },
+    }.get(book.paper_size)
+    if paper is None:
+        raise ValueError(f"지원하지 않는 용지 규격입니다: {book.paper_size}")
+    safe_title = book.running_title.replace('"', "")
     return f"""
 @font-face {{
   font-family: 'Book Serif';
@@ -349,8 +534,8 @@ def stylesheet(running_title: str) -> str:
   font-weight: 100 900;
 }}
 @page {{
-  size: A5;
-  margin: 18mm 16mm 19mm 18mm;
+  size: {book.paper_size};
+  margin: {paper["page_margin"]};
   @top-center {{
     content: '{safe_title}';
     font-family: 'Book Sans', sans-serif;
@@ -377,7 +562,7 @@ body {{
   color: #25231f;
   background: white;
   font-family: 'Book Serif', 'Noto Serif KR', 'Batang', serif;
-  font-size: 9.4pt;
+  font-size: {paper["body_size"]};
   line-height: 1.86;
   word-break: keep-all;
   overflow-wrap: break-word;
@@ -385,9 +570,9 @@ body {{
 }}
 .cover {{
   page: cover;
-  width: 148mm;
-  height: 210mm;
-  padding: 26mm 18mm 22mm;
+  width: {paper["width"]};
+  height: {paper["height"]};
+  padding: {paper["cover_padding"]};
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -407,7 +592,7 @@ body {{
 }}
 .cover-kicker {{ font: 500 8.5pt/1.5 'Book Sans', sans-serif; letter-spacing: .36em; }}
 .cover-main {{ margin: auto 0; }}
-.cover h1 {{ margin: 0; font-size: 25pt; line-height: 1.45; letter-spacing: .12em; font-weight: 650; }}
+.cover h1 {{ margin: 0; font-size: {paper["cover_title_size"]}; line-height: 1.45; letter-spacing: .12em; font-weight: 650; }}
 .cover .subtitle {{ margin: 7mm 0 0; font: 400 10pt/1.8 'Book Sans', sans-serif; letter-spacing: .12em; }}
 .cover .seal {{
   display: inline-block;
@@ -463,7 +648,7 @@ blockquote.original {{
   border-left: 1.2mm solid #8f6236;
   background: #fbf7ed;
   font-family: 'Noto Serif KR', 'Book Serif', 'Batang', serif;
-  font-size: 10.4pt;
+  font-size: {paper["original_size"]};
   line-height: 2;
   text-align: justify;
 }}
@@ -495,7 +680,7 @@ li {{ margin: 0 0 2.1mm; padding-left: .7mm; orphans: 3; widows: 3; }}
   background: #f7f2e9;
   list-style-position: inside;
 }}
-table {{ width: 100%; margin: 4mm 0 6mm; border-collapse: collapse; font: 400 8.5pt/1.58 'Book Sans', sans-serif; }}
+table {{ width: 100%; margin: 4mm 0 6mm; border-collapse: collapse; font: 400 {paper["table_size"]}/1.58 'Book Sans', sans-serif; }}
 thead {{ display: table-header-group; }}
 tr {{ break-inside: avoid; }}
 th {{ color: #fff; background: #73503c; font-weight: 650; }}
@@ -503,9 +688,17 @@ th, td {{ padding: 2.2mm 2.5mm; border: .2mm solid #d8d0c4; vertical-align: top;
 tbody tr:nth-child(even) {{ background: #f8f5ef; }}
 .ornament {{ margin: 8mm 0; text-align: center; color: #a87945; break-after: avoid; }}
 .subsection {{ break-inside: auto; }}
+.book-dhammapada .verse-section {{
+  break-inside: avoid-page;
+  page-break-inside: avoid;
+}}
+.book-lotus .passage-section {{
+  break-inside: avoid-page;
+  page-break-inside: avoid;
+}}
 strong {{ font-weight: 700; }}
 @media screen {{
-  body {{ width: 148mm; margin: 10mm auto; box-shadow: 0 2mm 9mm rgba(0,0,0,.15); }}
+  body {{ width: {paper["width"]}; margin: 10mm auto; box-shadow: 0 2mm 9mm rgba(0,0,0,.15); }}
 }}
 """
 
@@ -520,9 +713,9 @@ def book_html(book: Book) -> str:
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>{html.escape(book.title)}</title>
-<style>{stylesheet(book.running_title)}</style>
+<style>{stylesheet(book)}</style>
 </head>
-<body>
+<body class="book-{html.escape(book.composite, quote=True)}">
 <section class="cover">
   <div class="cover-kicker">불교 경전 우리말 해설</div>
   <div class="cover-main">
@@ -560,6 +753,10 @@ def render_pdf(book: Book, keep_html: bool = False) -> Path:
         raise FileNotFoundError(f"원본 문서를 찾을 수 없습니다: {book.source}")
     if book.composite == "dhammapada":
         dhammapada_chapter_files()
+    elif book.composite == "lotus":
+        lotus_chapter_files()
+    elif book.composite == "pureland":
+        pureland_sections()
     OUTPUT_DIR.mkdir(parents=True, exist_ok=True)
     html_path = OUTPUT_DIR / f".{book.output.stem}.html"
     html_path.write_text(book_html(book), encoding="utf-8")
@@ -603,7 +800,10 @@ def main() -> None:
     selected = BOOKS if args.book == "all" else tuple(book for book in BOOKS if book.key == args.book)
     for book in selected:
         output = render_pdf(book, keep_html=args.keep_html)
-        print(f"생성: {output.relative_to(ROOT)} ({output.stat().st_size:,} bytes)")
+        print(
+            f"생성: {output.relative_to(ROOT)} "
+            f"({book.paper_size}, {output.stat().st_size:,} bytes)"
+        )
 
 
 if __name__ == "__main__":
