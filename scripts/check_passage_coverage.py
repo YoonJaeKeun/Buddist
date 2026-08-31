@@ -15,7 +15,7 @@ reaches the end of the intended range.
 
 Usage::
 
-    python scripts/check_passage_coverage.py 불교_경전/아미타경_전문_한자음.md \\
+    python scripts/check_passage_coverage.py 불교_경전/전문_한자음/아미타경 \\
         불교_경전/아미타경_문장별_풀이_해설.md
 
 Several manuscripts may share one source (for example the two volumes of the
@@ -82,7 +82,7 @@ def check(source: str, manuscript: Path) -> bool:
 
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__)
-    parser.add_argument("source", type=Path, help="전문 한자음 표 파일")
+    parser.add_argument("source", type=Path, help="경전 한자음 디렉터리 또는 권별 파일")
     parser.add_argument("manuscripts", type=Path, nargs="+", help="문장별 풀이·해설 원고")
     args = parser.parse_args()
 

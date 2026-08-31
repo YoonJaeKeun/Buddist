@@ -707,7 +707,6 @@ def generate(repo_root: Path, width: int, audit_only: bool) -> int:
     cache_dir = repo_root / ".cache" / "buddist-sutra-builder"
     build_root = output_root.with_name(".전문_한자음.build")
     backup_root = output_root.with_name(".전문_한자음.backup")
-    combined_build_root = scripture_root / ".전문_단일파일.build"
     readings = load_hanja_readings(fetch(HANJA_CSV_URL, cache_dir))
     readings.update(EXTRA_READINGS)
     gaiji = load_gaiji(fetch(GAIJI_JSON_URL, cache_dir), readings)
@@ -722,9 +721,6 @@ def generate(repo_root: Path, width: int, audit_only: bool) -> int:
         if build_root.exists():
             shutil.rmtree(build_root)
         build_root.mkdir(parents=True)
-        if combined_build_root.exists():
-            shutil.rmtree(combined_build_root)
-        combined_build_root.mkdir(parents=True)
 
     for sutra in SUTRAS:
         xml_data = fetch(CBETA_RAW + sutra.xml_path, cache_dir)
@@ -756,21 +752,6 @@ def generate(repo_root: Path, width: int, audit_only: bool) -> int:
             "",
         ]
         extracted_parts: list[str] = []
-        combined_parts = [
-            f"# {sutra.title_ko} — 전문 한자음",
-            "",
-            f"> 저본: CBETA 대정신수대장경 {sutra.taisho} 《{sutra.title_zh}》<br>",
-            f"> 번역: {sutra.translator}<br>",
-            f"> 원문 XML: [{sutra.xml_path}]({CBETA_RAW}{sutra.xml_path})",
-            f"> 품별 우리말 풀이·해설: [{guide_name}]({guide_name})",
-            "",
-            "경전의 CBETA 기본 본문 전체를 한 파일에 모았다. 각 표의 첫째 줄은 "
-            "원문이고 셋째 줄은 같은 열의 한자를 읽는 한글 음이다. 문장부호 "
-            "아래의 빈칸은 정상이다.",
-            "",
-            "---",
-            "",
-        ]
         hanja_count = 0
         per_juan: list[dict[str, object]] = []
         for juan in sorted(juan_blocks):
@@ -789,10 +770,6 @@ def generate(repo_root: Path, width: int, audit_only: bool) -> int:
             filename = f"{juan:03d}.md"
             if not audit_only:
                 (sutra_dir / filename).write_text(rendered, encoding="utf-8")
-                _, separator, body = rendered.partition("\n---\n\n")
-                if not separator:
-                    raise ValueError(f"{sutra.slug} 제{juan}권 본문 구분선을 찾지 못함")
-                combined_parts.extend([f"## 제{juan}권", "", body.rstrip(), ""])
             sutra_index.append(f"- [제{juan}권]({filename})")
             extracted_parts.append(plain)
             hanja_count += count
@@ -810,9 +787,6 @@ def generate(repo_root: Path, width: int, audit_only: bool) -> int:
         if not audit_only:
             (sutra_dir / "README.md").write_text(
                 "\n".join(sutra_index).rstrip() + "\n", encoding="utf-8"
-            )
-            (combined_build_root / f"{sutra.slug}_전문_한자음.md").write_text(
-                "\n".join(combined_parts).rstrip() + "\n", encoding="utf-8"
             )
         extracted = "\n\n".join(extracted_parts)
         manifest.append(
@@ -856,9 +830,6 @@ def generate(repo_root: Path, width: int, audit_only: bool) -> int:
         build_root.rename(output_root)
         if backup_root.exists():
             shutil.rmtree(backup_root)
-        for combined_file in combined_build_root.glob("*_전문_한자음.md"):
-            combined_file.replace(scripture_root / combined_file.name)
-        combined_build_root.rmdir()
 
     print(
         json.dumps(
