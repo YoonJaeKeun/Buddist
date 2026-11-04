@@ -17,11 +17,12 @@ import tempfile
 import time
 from dataclasses import dataclass
 from pathlib import Path
-from urllib.parse import quote
+from urllib.parse import quote, unquote
 
 
 ROOT = Path(__file__).resolve().parents[1]
-OUTPUT_DIR = ROOT / "불교_경전" / "PDF"
+SOURCE_DIR = ROOT / "불교_경전"
+OUTPUT_DIR = SOURCE_DIR / "PDF"
 EDGE_CANDIDATES = (
     Path("/mnt/c/Program Files (x86)/Microsoft/Edge/Application/msedge.exe"),
     Path("/mnt/c/Program Files/Microsoft/Edge/Application/msedge.exe"),
@@ -689,6 +690,32 @@ def markdown_to_html(markdown: str) -> tuple[str, list[tuple[int, str, str]]]:
         if stripped == "---":
             output.append('<div class="ornament" aria-hidden="true">◆</div>')
             index += 1
+            continue
+
+        # A picture on its own line, optionally followed by an italic caption
+        # paragraph (`*그림 1. …*`).  Paths are relative to the scripture folder.
+        image = re.fullmatch(r"!\[([^\]]*)\]\(([^)\s]+)\)", stripped)
+        if image:
+            index += 1
+            caption = ""
+            lookahead = index
+            while lookahead < len(lines) and not lines[lookahead].strip():
+                lookahead += 1
+            if lookahead < len(lines):
+                following = lines[lookahead].strip()
+                if re.fullmatch(r"\*[^*].*[^*]\*", following):
+                    caption = following[1:-1]
+                    index = lookahead + 1
+            source = SOURCE_DIR / unquote(image.group(2))
+            if not source.exists():
+                raise FileNotFoundError(f"그림 파일을 찾을 수 없습니다: {source}")
+            output.append(
+                '<figure>'
+                f'<img src="{html.escape(windows_file_uri(source), quote=True)}" '
+                f'alt="{html.escape(image.group(1), quote=True)}">'
+                + (f"<figcaption>{inline_markup(caption)}</figcaption>" if caption else "")
+                + "</figure>"
+            )
             continue
 
         if stripped.startswith(">"):
@@ -1574,6 +1601,9 @@ code {{
 }}
 blockquote {{ break-inside: avoid; margin: 4mm 0 5mm; }}
 blockquote.quotation {{ padding: 4mm 5mm; border-left: 1mm solid #ad8352; background: #faf7f0; color: #554b40; }}
+figure {{ break-inside: avoid; margin: 6mm 0 7mm; text-align: center; }}
+figure img {{ max-width: 100%; max-height: 150mm; object-fit: contain; border: .25mm solid #d7c7ad; background: #f7f2e9; padding: 1.5mm; }}
+figcaption {{ margin-top: 2.5mm; color: #6b5d4f; font: 400 .86em/1.6 'Noto Sans KR', sans-serif; text-align: left; }}
 blockquote.original {{
   padding: 5mm 5.5mm;
   border: .25mm solid #d7c7ad;
@@ -1765,7 +1795,8 @@ def render_pdf(book: Book, keep_html: bool = False) -> Path:
     finally:
         shutil.rmtree(profile, ignore_errors=True)
         if not keep_html:
-            html_path.unlink(missing_ok=True)
+            if html_path.exists():
+                html_path.unlink()
     if not book.output.exists() or book.output.stat().st_size < 10_000:
         raise RuntimeError(f"PDF 생성에 실패했습니다: {book.output}")
     return book.output
