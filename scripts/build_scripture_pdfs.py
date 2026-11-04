@@ -49,6 +49,11 @@ AI_NOTICE = (
     "원문은 저본을 그대로 옮겼으나, 풀이와 해설은 전통 주석서를 대신하지 않으며 "
     "잘못 읽은 곳이 있을 수 있습니다."
 )
+GUIDE_BADGE = "AI 작성 안내서"
+GUIDE_NOTICE = (
+    "이 안내서는 AI가 정리한 것입니다. 사경하는 방법과 예법은 절과 스승에 따라 "
+    "다를 수 있으니, 다니는 절의 안내가 있다면 그것을 먼저 따르세요."
+)
 
 
 @dataclass(frozen=True)
@@ -72,6 +77,9 @@ class Book:
     group: str = ""
     fascicles: tuple[int, int] | None = None
     introduction: bool = True
+    kicker: str = "불교 경전 우리말 해설"
+    badge: str = AI_BADGE
+    notice: str = AI_NOTICE
 
     @property
     def selector(self) -> str:
@@ -237,6 +245,24 @@ BOOKS = (
         cover_mark="淨土",
     ),
     *avatamsaka_books(),
+    Book(
+        key="사경안내",
+        source=ROOT / "불교_경전" / "불경쓰기_연습_안내.md",
+        output=OUTPUT_DIR / "불경쓰기_연습_안내.pdf",
+        title="불경 쓰기 연습 안내",
+        subtitle="처음 시작하는 분을 위한 사경 길잡이",
+        running_title="불경 쓰기 연습 안내",
+        cover_text="一字一心",
+        paper_size="A4",
+        footer_text="경전 순서 · 하루 분량 · 쓰는 법\n노트와 필기구 고르기",
+        cover_palette="ink",
+        cover_motif="grid",
+        cover_hanja="寫經",
+        cover_mark="寫經",
+        kicker="불교 경전 쓰기 안내",
+        badge=GUIDE_BADGE,
+        notice=GUIDE_NOTICE,
+    ),
 )
 
 
@@ -956,6 +982,21 @@ COVER_PALETTES = {
     linear-gradient(160deg, #0e1730 0%, #263457 50%, #090e1e 100%);
 }
 """,
+    # 사경 안내 — ink on paper, warmed by the vermilion of a seal.
+    "ink": r"""
+.cover {
+  --ink: #faf6ef;
+  --muted: rgba(222,212,198,.74);
+  --accent: #e0a07a;
+  --fade: rgba(224,160,122,0);
+  --hairline: rgba(240,230,216,.18);
+  --mark-fill: linear-gradient(135deg, #f1c3a3 0%, #b9634a 100%);
+  --mark-ink: #16130f;
+  background:
+    radial-gradient(70% 46% at 76% 10%, rgba(200,120,90,.20) 0%, rgba(200,120,90,0) 60%),
+    linear-gradient(156deg, #16130f 0%, #2f2924 52%, #0e0c0a 100%);
+}
+""",
     # 화엄경 — one field per 회, all of them jewel-lit but none the same colour.
     "ocean": r"""
 .cover {
@@ -1116,6 +1157,32 @@ COVER_MOTIFS = {
 .cover-motif::before { top: -22mm; right: -18mm; width: 92mm; height: 92mm; }
 .cover-motif::after { top: 8mm; right: 14mm; width: 46mm; height: 46mm; border-color: rgba(207,216,227,.5); }
 .cover-motif span::before { top: 24mm; right: 32mm; width: 16mm; height: 16mm; border-color: rgba(232,240,250,.66); }
+""",
+    # 사경 안내 — the squared paper of a copying book, one square already filled.
+    "grid": r"""
+.cover-motif::before {
+  content: '';
+  position: absolute;
+  top: -4mm;
+  right: -4mm;
+  width: 98mm;
+  height: 98mm;
+  background-image:
+    linear-gradient(rgba(240,230,216,.26) .3mm, rgba(0,0,0,0) .3mm),
+    linear-gradient(90deg, rgba(240,230,216,.26) .3mm, rgba(0,0,0,0) .3mm);
+  background-size: 14mm 14mm;
+  -webkit-mask-image: radial-gradient(90% 90% at 100% 0%, #000 0%, rgba(0,0,0,.4) 50%, rgba(0,0,0,0) 82%);
+  mask-image: radial-gradient(90% 90% at 100% 0%, #000 0%, rgba(0,0,0,.4) 50%, rgba(0,0,0,0) 82%);
+}
+.cover-motif::after {
+  content: '';
+  position: absolute;
+  top: 24mm;
+  right: 24mm;
+  width: 13.7mm;
+  height: 13.7mm;
+  background: rgba(224,160,122,.5);
+}
 """,
     # 반야심경 — one unclosed stroke: the circle that holds nothing.
     "enso": r"""
@@ -1586,7 +1653,7 @@ def cover_html(book: Book, footer: str) -> str:
   <div class="cover-ground" aria-hidden="true"></div>
   <div class="cover-motif" aria-hidden="true"><span></span></div>
   <div class="cover-top">{mark}
-    <span class="cover-kicker">불교 경전 우리말 해설</span>
+    <span class="cover-kicker">{html.escape(book.kicker)}</span>
   </div>
   <div class="cover-main">{eyebrow}
     <h1>{html.escape(book.title)}</h1>
@@ -1595,7 +1662,7 @@ def cover_html(book: Book, footer: str) -> str:
     <div class="seal">{html.escape(book.cover_text)}</div>
   </div>
   <div class="cover-footer">
-    <span class="cover-ai">{html.escape(AI_BADGE)}</span><br>{footer}
+    <span class="cover-ai">{html.escape(book.badge)}</span><br>{footer}
   </div>
 </section>"""
 
@@ -1615,7 +1682,7 @@ def book_html(book: Book) -> str:
 <body class="book-{html.escape(book.composite, quote=True)}">
 {cover_html(book, footer)}
 {toc}
-<p class="ai-notice">{html.escape(AI_NOTICE)}</p>
+<p class="ai-notice">{html.escape(book.notice)}</p>
 <main>{body}</main>
 </body>
 </html>"""
